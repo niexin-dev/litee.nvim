@@ -9,8 +9,8 @@ local M = {}
 -- but takes a list of clients as the first argument.
 function M.multi_client_request(clients, method, params, handler, bufnr)
     for _, client in ipairs(clients) do
-        if client.supports_method(method) then
-            client.request(method, params, handler, bufnr or 0)
+        if client:supports_method(method) then
+            client:request(method, params, handler, bufnr or 0)
             return client
         end
     end
@@ -102,12 +102,12 @@ function M.symbol_from_node(clients, node, bufnr)
         query = node.name,
     }
     for _, client in ipairs(clients) do
-        if not client.supports_method("workspace/symbol") then
+        if not client:supports_method("workspace/symbol") then
             goto continue
         end
         -- not all LSPs are optimized, specially ones in early development, set
         -- this timeout high.
-        local out = client.request_sync("workspace/symbol", params, 5000, bufnr)
+        local out = client:request_sync("workspace/symbol", params, 5000, bufnr)
         if out == nil then
             goto continue
         end
